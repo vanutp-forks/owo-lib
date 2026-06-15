@@ -1,27 +1,32 @@
 package io.wispforest.owo.mixin.braid;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.wispforest.owo.braid.core.events.CharInputEvent;
 import io.wispforest.owo.braid.util.layers.BraidLayersBinding;
 import net.minecraft.client.Keyboard;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
 
-    @WrapOperation(method = "method_1473", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
-    private static boolean captureScreenCharTyped(Element instance, char chr, int modifiers, Operation<Boolean> original) {
-        return BraidLayersBinding.tryHandleEvent((Screen) instance, new CharInputEvent(chr, modifiers))
-            || original.call(instance, chr, modifiers);
+    @Inject(method = "method_1473", at = @At("HEAD"), cancellable = true)
+    private static void captureScreenCharTyped(Element element, char character, int modifiers, CallbackInfo ci) {
+        Screen screen = MinecraftClient.getInstance().currentScreen;
+        if (BraidLayersBinding.tryHandleEvent(screen, new CharInputEvent(character, modifiers))) {
+            ci.cancel();
+        }
     }
 
-    @WrapOperation(method = "method_1458", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
-    private static boolean captureScreenCharTyped2(Element instance, char chr, int modifiers, Operation<Boolean> original) {
-        return BraidLayersBinding.tryHandleEvent((Screen) instance, new CharInputEvent(chr, modifiers))
-            || original.call(instance, chr, modifiers);
+    @Inject(method = "method_1458", at = @At("HEAD"), cancellable = true)
+    private static void captureScreenCharTyped2(Element element, int character, int modifiers, CallbackInfo ci) {
+        Screen screen = MinecraftClient.getInstance().currentScreen;
+        if (BraidLayersBinding.tryHandleEvent(screen, new CharInputEvent((char) character, modifiers))) {
+            ci.cancel();
+        }
     }
 }

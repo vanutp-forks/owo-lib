@@ -49,8 +49,8 @@ public class TranslationStorageMixin implements TextLanguage {
         LanguageAccess.textConsumer = owo$buildingTextMap::put;
     }
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void onInit(Map<String, String> translations, boolean rightToLeft, CallbackInfo ci) {
+    @Inject(method = "<init>(Ljava/util/Map;ZLjava/util/Map;)V", at = @At("TAIL"))
+    private void onInit(Map<String, String> translations, boolean rightToLeft, Map<String, Text> componentStorage, CallbackInfo ci) {
         this.owo$textMap = owo$buildingTextMap;
         owo$buildingTextMap = null;
     }
