@@ -57,32 +57,32 @@ public class ColorPickerComponent extends BaseComponent {
         var matrix = context.getMatrices().peek().getPositionMatrix();
 
         buffer.vertex(matrix, this.renderX(), this.renderY(), 0)
-                .color(this.hue, 0f, 1f, 1f);
+            .color(this.hue, 0f, 1f, 1f);
         buffer.vertex(matrix, this.renderX(), this.renderY() + this.renderHeight(), 0)
-                .color(this.hue, 0f, 0f, 1f);
+            .color(this.hue, 0f, 0f, 1f);
         buffer.vertex(matrix, this.renderX() + this.colorAreaWidth(), this.renderY() + this.renderHeight(), 0)
-                .color(this.hue, 1f, 0f, 1f);
+            .color(this.hue, 1f, 0f, 1f);
         buffer.vertex(matrix, this.renderX() + this.colorAreaWidth(), this.renderY(), 0)
-                .color(this.hue, 1f, 1f, 1f);
+            .color(this.hue, 1f, 1f, 1f);
 
         OwoClient.HSV_PROGRAM.use();
         BufferRenderer.drawWithGlobalProgram(buffer.end());
 
         context.drawRectOutline(
-                (int) (this.renderX() + (this.saturation * this.colorAreaWidth()) - 1),
-                (int) (this.renderY() + ((1 - this.value) * (this.renderHeight() - 1)) - 1),
-                3, 3,
-                Color.WHITE.argb()
+            (int) (this.renderX() + (this.saturation * this.colorAreaWidth()) - 1),
+            (int) (this.renderY() + ((1 - this.value) * (this.renderHeight() - 1)) - 1),
+            3, 3,
+            Color.WHITE.argb()
         );
 
         // Hue selector
 
         context.drawSpectrum(this.renderX() + this.hueSelectorX(), this.renderY(), this.selectorWidth, this.renderHeight(), true);
         context.drawRectOutline(
-                this.renderX() + this.hueSelectorX() - 1,
-                this.renderY() + (int) ((this.renderHeight() - 1) * (1 - this.hue) - 1),
-                this.selectorWidth + 2, 3,
-                Color.WHITE.argb()
+            this.renderX() + this.hueSelectorX() - 1,
+            this.renderY() + (int) ((this.renderHeight() - 1) * (1 - this.hue) - 1),
+            this.selectorWidth + 2, 3,
+            Color.WHITE.argb()
         );
 
         // Alpha selector
@@ -91,10 +91,10 @@ public class ColorPickerComponent extends BaseComponent {
             var color = 0xFF << 24 | this.selectedColor.get().rgb();
             context.drawGradientRect(this.renderX() + this.alphaSelectorX(), this.renderY(), this.selectorWidth, this.renderHeight(), color, color, 0, 0);
             context.drawRectOutline(
-                    this.renderX() + this.alphaSelectorX() - 1,
-                    this.renderY() + (int) ((this.renderHeight() - 1) * (1 - this.alpha) - 1),
-                    this.selectorWidth + 2, 3,
-                    Color.WHITE.argb()
+                this.renderX() + this.alphaSelectorX() - 1,
+                this.renderY() + (int) ((this.renderHeight() - 1) * (1 - this.alpha) - 1),
+                this.selectorWidth + 2, 3,
+                Color.WHITE.argb()
             );
         }
     }
@@ -102,8 +102,8 @@ public class ColorPickerComponent extends BaseComponent {
     @Override
     public boolean onMouseDown(double mouseX, double mouseY, int button) {
         this.lastClicked = this.showAlpha && mouseX >= this.alphaSelectorX()
-                ? Section.ALPHA_SELECTOR
-                : mouseX > this.hueSelectorX()
+            ? Section.ALPHA_SELECTOR
+            : mouseX > this.hueSelectorX()
                 ? Section.HUE_SELECTOR
                 : Section.COLOR_AREA;
 

@@ -1,5 +1,16 @@
 package io.wispforest.uwu.client;
 
+import io.wispforest.owo.braid.core.LayoutAxis;
+import io.wispforest.owo.braid.util.BraidHudBinding;
+import io.wispforest.owo.braid.util.BraidHudElement;
+import io.wispforest.owo.braid.util.BraidTooltipComponent;
+import io.wispforest.owo.braid.util.layers.BraidLayersBinding;
+import io.wispforest.owo.braid.widgets.basic.Box;
+import io.wispforest.owo.braid.widgets.basic.Clip;
+import io.wispforest.owo.braid.widgets.basic.Sized;
+import io.wispforest.owo.braid.widgets.basic.Transform;
+import io.wispforest.owo.braid.widgets.flex.Row;
+import io.wispforest.owo.braid.widgets.grid.Grid;
 import io.wispforest.owo.network.OwoNetChannel;
 import io.wispforest.owo.particles.ClientParticles;
 import io.wispforest.owo.particles.systems.ParticleSystemController;
@@ -15,6 +26,8 @@ import io.wispforest.owo.ui.layers.Layers;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.util.UISounds;
 import io.wispforest.uwu.Uwu;
+import io.wispforest.uwu.client.braid.TestSelector;
+import io.wispforest.uwu.items.UwuBraidItem;
 import io.wispforest.uwu.network.UwuNetworkExample;
 import io.wispforest.uwu.network.UwuOptionalNetExample;
 import net.minecraft.client.MinecraftClient;
@@ -24,6 +37,7 @@ import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AllayEntity;
 import net.minecraft.item.Items;
@@ -38,11 +52,15 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @Mod(value = "uwu", dist = Dist.CLIENT)
 public class UwuClient {
@@ -56,8 +74,8 @@ public class UwuClient {
 //            HandledScreens.register(EPIC_SCREEN_HANDLER_TYPE, EpicHandledModelScreen::new);
         });
 
-        final var binding = new KeyBinding("key.uwu.hud_test", GLFW.GLFW_KEY_J, "misc");
-        final var bindingButCooler = new KeyBinding("key.uwu.hud_test_two", GLFW.GLFW_KEY_K, "misc");
+        final var binding = new KeyBinding("key.uwu.hud_test", GLFW.GLFW_KEY_J, KeyBinding.MISC_CATEGORY);
+        final var bindingButCooler = new KeyBinding("key.uwu.hud_test_two", GLFW.GLFW_KEY_K, KeyBinding.MISC_CATEGORY);
 
         modBus.addListener(RegisterKeyMappingsEvent.class, event -> {
             event.register(binding);
@@ -66,19 +84,48 @@ public class UwuClient {
 
         final var hudComponentId = Identifier.of("uwu", "test_element");
         final Supplier<Component> hudComponent = () ->
-                Containers.verticalFlow(Sizing.content(), Sizing.content())
-                        .child(Components.item(Items.DIAMOND.getDefaultStack()).margins(Insets.of(3)))
-                        .child(Components.label(Text.literal("epic stuff in hud")))
-                        .child(Components.entity(Sizing.fixed(50), EntityType.ALLAY, null))
-                        .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
-                        .padding(Insets.of(5))
-                        .surface(Surface.PANEL)
-                        .margins(Insets.of(5))
-                        .positioning(Positioning.relative(100, 25));
+            Containers.verticalFlow(Sizing.content(), Sizing.content())
+                .child(Components.item(Items.DIAMOND.getDefaultStack()).margins(Insets.of(3)))
+                .child(Components.label(Text.literal("epic stuff in hud")))
+                .child(Components.entity(Sizing.fixed(50), EntityType.ALLAY, null))
+                .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+                .padding(Insets.of(5))
+                .surface(Surface.PANEL)
+                .margins(Insets.of(5))
+                .positioning(Positioning.relative(100, 25));
 
         final var coolerComponentId = Identifier.of("uwu", "test_element_two");
         final Supplier<Component> coolerComponent = () -> UIModel.load(Path.of("../src/testmod/resources/assets/uwu/owo_ui/test_element_two.xml")).expandTemplate(FlowLayout.class, "hud-element", Map.of());
         Hud.add(coolerComponentId, coolerComponent);
+
+        modBus.addListener(RegisterClientTooltipComponentFactoriesEvent.class, event -> {
+            event.register(UwuBraidItem.Tooltip.class, tooltip -> {
+                var random = new Random(System.currentTimeMillis() / 450);
+                return new BraidTooltipComponent(new Sized(
+                    32 * 5, 32 * 5, new Clip(
+                    true, true,
+                    new Row(
+                        new Transform(
+                            new Matrix4f().translation(((float) (System.currentTimeMillis() / 450d - Math.floor(System.currentTimeMillis() / 450d))) * -32, 0, 0),
+                            new Grid(
+                                LayoutAxis.VERTICAL,
+                                6,
+                                Grid.CellFit.loose(),
+                                Stream.generate(() -> new TestSelector.Amogus(
+                                        new Box(io.wispforest.owo.braid.core.Color.hsv(random.nextDouble(), .75, 1)),
+                                        new Box(Color.WHITE.toBraid()),
+                                        8
+                                    ))
+                                    .limit(6 * 5).toList()
+                            )
+                        )
+                    )
+                )
+                ));
+            });
+        });
+
+        BraidHudBinding.activate(new BraidHudElement(new HudTestWidget()));
 
         NeoForge.EVENT_BUS.addListener(ClientTickEvent.Post.class, event -> {
             while (binding.wasPressed()) {
@@ -124,39 +171,46 @@ public class UwuClient {
             if (MinecraftClient.getInstance().world == null) return;
 
             instance.adapter.rootComponent.child(
-                    Containers.horizontalFlow(Sizing.content(), Sizing.content())
-                            .child(Components.entity(Sizing.fixed(20), EntityType.ALLAY, null).<EntityComponent<AllayEntity>>configure(component -> {
-                                component.allowMouseRotation(true)
-                                        .scale(.75f);
+                Containers.horizontalFlow(Sizing.content(), Sizing.content())
+                    .child(Components.entity(Sizing.fixed(20), EntityType.ALLAY, null).<EntityComponent<AllayEntity>>configure(component -> {
+                        component.allowMouseRotation(true)
+                            .scale(.75f);
 
-                                component.mouseDown().subscribe((mouseX, mouseY, button) -> {
-                                    UISounds.playInteractionSound();
-                                    return true;
-                                });
-                            })).child(Components.textBox(Sizing.fixed(100), "allay text").<TextFieldWidget>configure(textBox -> {
-                                textBox.verticalSizing(Sizing.fixed(9));
-                                textBox.setDrawsBackground(false);
-                            })).<FlowLayout>configure(layout -> {
-                                layout.gap(5).margins(Insets.left(4)).verticalAlignment(VerticalAlignment.CENTER);
+                        component.mouseDown().subscribe((mouseX, mouseY, button) -> {
+                            UISounds.playInteractionSound();
+                            return true;
+                        });
+                    })).child(Components.textBox(Sizing.fixed(100), "allay text").<TextFieldWidget>configure(textBox -> {
+                        textBox.verticalSizing(Sizing.fixed(9));
+                        textBox.setDrawsBackground(false);
+                    })).<FlowLayout>configure(layout -> {
+                        layout.gap(5).margins(Insets.left(4)).verticalAlignment(VerticalAlignment.CENTER);
 
-                                instance.alignComponentToWidget(widget -> {
-                                    if (!(widget instanceof ButtonWidget button)) return false;
-                                    return button.getMessage().getContent() instanceof TranslatableTextContent translatable && translatable.getKey().equals("gui.stats");
-                                }, Layer.Instance.AnchorSide.RIGHT, 0, layout);
-                            })
+                        instance.alignComponentToWidget(widget -> {
+                            if (!(widget instanceof ButtonWidget button)) return false;
+                            return button.getMessage().getContent() instanceof TranslatableTextContent translatable && translatable.getKey().equals("gui.stats");
+                        }, Layer.Instance.AnchorSide.RIGHT, 0, layout);
+                    })
             );
         }, GameMenuScreen.class);
 
         Layers.add(Containers::verticalFlow, instance -> {
             ButtonComponent button;
             instance.adapter.rootComponent.child(
-                    (button = Components.button(Text.literal(":)"), buttonComponent -> {
-                        MinecraftClient.getInstance().player.sendMessage(Text.literal("handled screen moment"));
-                    })).verticalSizing(Sizing.fixed(12))
+                (button = Components.button(Text.literal(":)"), buttonComponent -> {
+                    MinecraftClient.getInstance().player.sendMessage(Text.literal("handled screen moment"), false);
+                })).verticalSizing(Sizing.fixed(12))
             );
 
             instance.alignComponentToHandledScreenCoordinates(button, 125, 65);
         }, InventoryScreen.class);
+
+        BraidLayersBinding.add(
+            screen -> screen instanceof InventoryScreen,
+            new LayersTestWidget()
+        );
+
+        BlockEntityRendererFactories.register(Uwu.BRAID_DISPLAY_ENTITY, BraidDisplayBlockEntityRenderer::new);
     }
 
     public record WeirdMessage(int e) {}

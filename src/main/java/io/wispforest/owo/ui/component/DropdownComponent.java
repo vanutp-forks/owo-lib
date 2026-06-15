@@ -1,5 +1,6 @@
 package io.wispforest.owo.ui.component;
 
+import io.wispforest.owo.Owo;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -8,6 +9,7 @@ import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -24,7 +26,7 @@ import java.util.function.Function;
 
 public class DropdownComponent extends FlowLayout {
 
-    protected static final Identifier ICONS_TEXTURE = Identifier.of("owo", "textures/gui/dropdown_icons.png");
+    protected static final Identifier ICONS_TEXTURE = Owo.id("textures/gui/dropdown_icons.png");
     protected final FlowLayout entries;
     protected boolean closeWhenNotHovered = false;
 
@@ -200,8 +202,8 @@ public class DropdownComponent extends FlowLayout {
                 }
                 case "nested" -> {
                     var text = entry.getAttribute("translate").equals("true")
-                            ? Text.translatable(entry.getAttribute("name"))
-                            : Text.literal(entry.getAttribute("name"));
+                        ? Text.translatable(entry.getAttribute("name"))
+                        : Text.literal(entry.getAttribute("name"));
                     this.nested(text, Sizing.content(), dropdownComponent -> dropdownComponent.parseAndApplyEntries(entry));
                 }
             }
@@ -210,10 +212,10 @@ public class DropdownComponent extends FlowLayout {
 
     protected static void drawIconFromTexture(OwoUIDrawContext context, ParentComponent dropdown, int y, int u, int v) {
         context.drawTexture(ICONS_TEXTURE,
-                dropdown.x() + dropdown.width() - dropdown.padding().get().right() - 10, y,
-                u, v,
-                9, 9,
-                32, 32
+            dropdown.x() + dropdown.width() - dropdown.padding().get().right() - 10, y,
+            u, v,
+            9, 9,
+            32, 32
         );
     }
 
@@ -231,11 +233,11 @@ public class DropdownComponent extends FlowLayout {
         public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
             var margins = this.margins.get();
             context.fill(
-                    this.x - margins.left(),
-                    this.y - margins.top(),
-                    this.x + this.width + margins.right(),
-                    this.y + this.height + margins.bottom(),
-                    0xFF121212
+                this.x - margins.left(),
+                this.y - margins.top(),
+                this.x + this.width + margins.right(),
+                this.y + this.height + margins.bottom(),
+                0xFF121212
             );
         }
 
@@ -310,11 +312,11 @@ public class DropdownComponent extends FlowLayout {
             if (this.isInBoundingBox(mouseX, mouseY)) {
                 var margins = this.margins.get();
                 context.fill(
-                        this.x - margins.left(),
-                        this.y - margins.top(),
-                        this.x + this.width + margins.right(),
-                        this.y + this.height + margins.bottom(),
-                        0x44FFFFFF
+                    this.x - margins.left(),
+                    this.y - margins.top(),
+                    this.x + this.width + margins.right(),
+                    this.y + this.height + margins.bottom(),
+                    0x44FFFFFF
                 );
             }
 

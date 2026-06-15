@@ -75,37 +75,37 @@ public class ReiWidgetComponent extends BaseComponent {
     @Override
     public boolean onMouseDown(double mouseX, double mouseY, int button) {
         return this.widget.mouseClicked(this.x + mouseX, this.y + mouseY, button)
-                | super.onMouseDown(mouseX, mouseY, button);
+            | super.onMouseDown(mouseX, mouseY, button);
     }
 
     @Override
     public boolean onMouseUp(double mouseX, double mouseY, int button) {
         return this.widget.mouseReleased(this.x + mouseX, this.y + mouseY, button)
-                | super.onMouseUp(mouseX, mouseY, button);
+            | super.onMouseUp(mouseX, mouseY, button);
     }
 
     @Override
     public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
         return this.widget.mouseScrolled(this.x + mouseX, this.y + mouseY, 0, amount)
-                | super.onMouseScroll(mouseX, mouseY, amount);
+            | super.onMouseScroll(mouseX, mouseY, amount);
     }
 
     @Override
     public boolean onMouseDrag(double mouseX, double mouseY, double deltaX, double deltaY, int button) {
         return this.widget.mouseDragged(this.x + mouseX, this.y + mouseY, button, deltaX, deltaY)
-                | super.onMouseDrag(mouseX, mouseY, deltaX, deltaY, button);
+            | super.onMouseDrag(mouseX, mouseY, deltaX, deltaY, button);
     }
 
     @Override
     public boolean onCharTyped(char chr, int modifiers) {
         return this.widget.charTyped(chr, modifiers)
-                | super.onCharTyped(chr, modifiers);
+            | super.onCharTyped(chr, modifiers);
     }
 
     @Override
     public boolean onKeyPress(int keyCode, int scanCode, int modifiers) {
         return this.widget.keyPressed(keyCode, scanCode, modifiers)
-                | super.onKeyPress(keyCode, scanCode, modifiers);
+            | super.onKeyPress(keyCode, scanCode, modifiers);
     }
 
     @Override

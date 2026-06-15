@@ -37,8 +37,8 @@ public abstract class BaseUIModelHandledScreen<R extends ParentComponent, S exte
         this.model = providedModel;
 
         this.modelId = source instanceof BaseUIModelScreen.DataSource.AssetDataSource assetSource
-                ? assetSource.assetPath()
-                : null;
+            ? assetSource.assetPath()
+            : null;
     }
 
     protected BaseUIModelHandledScreen(S handler, PlayerInventory inventory, Text title, Class<R> rootComponentClass, Identifier modelId) {

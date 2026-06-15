@@ -1,5 +1,6 @@
 package io.wispforest.owo.serialization.format.nbt;
 
+import com.google.common.collect.MapMaker;
 import io.wispforest.endec.*;
 import io.wispforest.endec.temp.OptionalFieldFlag;
 import io.wispforest.endec.util.RecursiveDeserializer;
@@ -90,17 +91,17 @@ public class NbtDeserializer extends RecursiveDeserializer<NbtElement> implement
     private final Set<IdentityHolder<NbtElement>> encodedOptionals = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
-    public <V> Optional<V> readOptional(SerializationContext ctx, Endec<V> endec) {
-        var value = this.getValue();
-        if (this.encodedOptionals.contains(new IdentityHolder<>(value))) {
-            return Optional.of(endec.decode(ctx, this));
-        }
-
-        var struct = this.struct();
-        return struct.field("present", ctx, Endec.BOOLEAN)
-                ? Optional.of(struct.field("value", ctx, endec))
-                : Optional.empty();
+public <V> Optional<V> readOptional(SerializationContext ctx, Endec<V> endec) {
+    var value = this.getValue();
+    if (this.encodedOptionals.contains(new IdentityHolder<>(value))) {
+        return Optional.of(endec.decode(ctx, this));
     }
+
+    var struct = this.struct();
+    return struct.field("present", ctx, Endec.BOOLEAN)
+            ? Optional.of(struct.field("value", ctx, endec))
+            : Optional.empty();
+}
 
     // ---
 
@@ -152,7 +153,7 @@ public class NbtDeserializer extends RecursiveDeserializer<NbtElement> implement
                 }
             }
             default ->
-                    throw new IllegalArgumentException("Non-standard, unrecognized NbtElement implementation cannot be decoded");
+                throw new IllegalArgumentException("Non-standard, unrecognized NbtElement implementation cannot be decoded");
         }
     }
 
@@ -225,9 +226,9 @@ public class NbtDeserializer extends RecursiveDeserializer<NbtElement> implement
         public java.util.Map.Entry<String, V> next() {
             var key = this.keys.next();
             return NbtDeserializer.this.frame(
-                    () -> this.compound.get(key),
-                    () -> java.util.Map.entry(key, this.valueEndec.decode(this.ctx, NbtDeserializer.this)),
-                    false
+                () -> this.compound.get(key),
+                () -> java.util.Map.entry(key, this.valueEndec.decode(this.ctx, NbtDeserializer.this)),
+                false
             );
         }
     }
@@ -247,9 +248,9 @@ public class NbtDeserializer extends RecursiveDeserializer<NbtElement> implement
             }
 
             return NbtDeserializer.this.frame(
-                    () -> this.compound.get(name),
-                    () -> endec.decode(ctx, NbtDeserializer.this),
-                    true
+                () -> this.compound.get(name),
+                () -> endec.decode(ctx, NbtDeserializer.this),
+                true
             );
         }
 

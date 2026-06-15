@@ -54,7 +54,7 @@ public class UIModelLoader implements SynchronousResourceReloader {
             try (var stream = Files.newInputStream(HOT_RELOAD_LOCATIONS.get(id))) {
                 return UIModel.load(stream);
             } catch (ParserConfigurationException | IOException | SAXException e) {
-                MinecraftClient.getInstance().player.sendMessage(TextOps.concat(Owo.PREFIX, TextOps.withFormatting("hot ui model reload failed, check the log for details", Formatting.RED)));
+                MinecraftClient.getInstance().player.sendMessage(TextOps.concat(Owo.PREFIX, TextOps.withFormatting("hot ui model reload failed, check the log for details", Formatting.RED)), false);
                 Owo.LOGGER.error("Hot UI model reload failed", e);
             }
         }
@@ -111,7 +111,7 @@ public class UIModelLoader implements SynchronousResourceReloader {
 
                 LOADED_MODELS.put(modelId, UIModel.load(resource.getInputStream()));
             } catch (ParserConfigurationException | IOException | SAXException e) {
-                Owo.LOGGER.error("Could not parse UI model {}", resourceId, e);
+                Owo.LOGGER.error("Couldn't parse UI model {}", resourceId, e);
             }
         });
 

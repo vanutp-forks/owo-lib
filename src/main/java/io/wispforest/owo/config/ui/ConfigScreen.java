@@ -52,7 +52,7 @@ import java.util.function.Predicate;
  */
 public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
-    public static final Identifier DEFAULT_MODEL_ID = Identifier.of("owo", "config");
+    public static final Identifier DEFAULT_MODEL_ID = Owo.id("config");
 
     private static final Map<Predicate<Option<?>>, OptionComponentFactory<?>> DEFAULT_FACTORIES = new HashMap<>();
     /**
@@ -131,7 +131,7 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
 
         rootComponent.childById(LabelComponent.class, "title").text(Text.translatable("text.config." + this.config.name() + ".title"));
         if (this.client.world == null) {
-            rootComponent.surface(Surface.OPTIONS_BACKGROUND);
+            rootComponent.surface(Surface.optionsBackground());
         }
 
         rootComponent.childById(ButtonComponent.class, "done-button").onPress(button -> this.close());
@@ -388,8 +388,8 @@ public class ConfigScreen extends BaseUIModelScreen<FlowLayout> {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_F && ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0)) {
             this.uiAdapter.rootComponent.focusHandler().focus(
-                    this.uiAdapter.rootComponent.childById(Component.class, "search-field"),
-                    Component.FocusSource.MOUSE_CLICK
+                this.uiAdapter.rootComponent.childById(Component.class, "search-field"),
+                Component.FocusSource.MOUSE_CLICK
             );
             return true;
         } else {

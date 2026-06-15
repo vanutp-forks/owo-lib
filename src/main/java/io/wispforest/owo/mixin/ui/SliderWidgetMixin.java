@@ -46,7 +46,7 @@ public abstract class SliderWidgetMixin extends ClickableWidget {
         int decimalPlaces = discrete.decimalPlaces();
 
         this.setValue(
-                (new BigDecimal(min + value * (max - min)).setScale(decimalPlaces, RoundingMode.HALF_UP).doubleValue() - min) / (max - min)
+            (new BigDecimal(min + value * (max - min)).setScale(decimalPlaces, RoundingMode.HALF_UP).doubleValue() - min) / (max - min)
         );
     }
 

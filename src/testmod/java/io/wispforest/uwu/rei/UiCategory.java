@@ -34,24 +34,24 @@ public class UiCategory implements DisplayCategory<Display> {
         var root = adapter.rootComponent();
 
         root.horizontalAlignment(HorizontalAlignment.CENTER)
-                .surface(Surface.DARK_PANEL)
-                .padding(Insets.of(8));
+            .surface(Surface.DARK_PANEL)
+            .padding(Insets.of(8));
 
         var inner = Containers.verticalFlow(Sizing.fill(100), Sizing.content());
         inner.horizontalAlignment(HorizontalAlignment.CENTER).surface(Surface.flat(0xFF00FFAF));
 
         inner.child(Components.label(Text.of("A demonstration\ninside REI"))
-                .color(Color.BLACK)
-                .positioning(Positioning.absolute(3, 3))
+            .color(Color.BLACK)
+            .positioning(Positioning.absolute(3, 3))
         );
 
         var animation = inner.horizontalSizing().animate(250, Easing.QUADRATIC, Sizing.fill(65));
         inner.child(Components.button(Text.of("shrink"), (ButtonComponent button) -> animation.forwards())
-                .margins(Insets.vertical(25))
-                .horizontalSizing(Sizing.fixed(60)));
+            .margins(Insets.vertical(25))
+            .horizontalSizing(Sizing.fixed(60)));
         inner.child(Components.button(Text.of("grow"), (ButtonComponent button) -> animation.backwards())
-                .margins(Insets.vertical(25))
-                .horizontalSizing(Sizing.fixed(60)));
+            .margins(Insets.vertical(25))
+            .horizontalSizing(Sizing.fixed(60)));
 
         inner.child(adapter.wrap(Widgets.createSlot(new Point(0, 0)).entry(EntryStacks.of(Items.ECHO_SHARD))));
 

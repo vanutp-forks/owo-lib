@@ -1,5 +1,6 @@
 package io.wispforest.owo.serialization.format.nbt;
 
+import com.google.common.collect.MapMaker;
 import io.wispforest.endec.*;
 import io.wispforest.endec.temp.OptionalFieldFlag;
 import io.wispforest.endec.util.RecursiveSerializer;
@@ -9,6 +10,10 @@ import net.minecraft.network.encoding.VarLongs;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import java.util.*;
+
+import org.spongepowered.asm.mixin.Mutable;
+
+import java.lang.ref.WeakReference;
 
 public class NbtSerializer extends RecursiveSerializer<NbtElement> implements SelfDescribedSerializer<NbtElement> {
 
@@ -100,23 +105,23 @@ public class NbtSerializer extends RecursiveSerializer<NbtElement> implements Se
     private final Set<IdentityHolder<NbtElement>> encodedOptionals = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
-    public <V> void writeOptional(SerializationContext ctx, Endec<V> endec, Optional<V> optional) {
-        MutableObject<NbtElement> frameData = new MutableObject<>();
+public <V> void writeOptional(SerializationContext ctx, Endec<V> endec, Optional<V> optional) {
+    MutableObject<NbtElement> frameData = new MutableObject<>();
 
-        this.frame(encoded -> {
-            try (var struct = this.struct()) {
-                struct.field("present", ctx, Endec.BOOLEAN, optional.isPresent());
-                optional.ifPresent(value -> struct.field("value", ctx.withoutAttributes(OptionalFieldFlag.INSTANCE), endec, value));
-            }
+    this.frame(encoded -> {
+        try (var struct = this.struct()) {
+            struct.field("present", ctx, Endec.BOOLEAN, optional.isPresent());
+            optional.ifPresent(value -> struct.field("value", ctx.withoutAttributes(OptionalFieldFlag.INSTANCE), endec, value));
+        }
+    
+        var compound = encoded.require("optional representation");
 
-            var compound = encoded.require("optional representation");
+        encodedOptionals.add(new IdentityHolder<>(compound));
+        frameData.setValue(compound);
+    }, false);
 
-            encodedOptionals.add(new IdentityHolder<>(compound));
-            frameData.setValue(compound);
-        }, false);
-
-        this.consume(frameData.getValue());
-    }
+    this.consume(frameData.getValue());
+}
 
     // ---
 
@@ -172,7 +177,7 @@ public class NbtSerializer extends RecursiveSerializer<NbtElement> implements Se
 
             NbtSerializer.this.frame(encoded -> {
                 endec.encode(ctx, NbtSerializer.this, value);
-
+    
                 var element = encoded.require("struct field");
 
                 if (mayOmit && NbtSerializer.this.encodedOptionals.contains(new IdentityHolder<>(element))) {

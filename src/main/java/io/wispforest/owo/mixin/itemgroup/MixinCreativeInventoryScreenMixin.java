@@ -26,8 +26,8 @@ public abstract class MixinCreativeInventoryScreenMixin {
 //    @Shadow(remap = false) // FAPI
 //    private static int currentPage;
 
-    private static final Int2ObjectMap<ItemGroup> owo$selectedTabForPage = new Int2ObjectOpenHashMap<>();
-    private static boolean owo$calledFromInit = false;
+    @Unique private static final Int2ObjectMap<ItemGroup> selectedTabForPage = new Int2ObjectOpenHashMap<>();
+    @Unique private static boolean calledFromInit = false;
 
 //    @Shadow(remap = false) // FAPI
 //    private boolean isGroupVisible(ItemGroup itemGroup) { throw new RuntimeException(); }

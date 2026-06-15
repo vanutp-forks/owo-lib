@@ -40,42 +40,42 @@ public class EpicHandledScreen extends BaseOwoHandledScreen<FlowLayout, EpicScre
         selectBox.setTextPredicate(s -> s.matches("\\d*"));
 
         rootComponent.child(
-                Components.texture(Identifier.of("textures/gui/container/shulker_box.png"), 0, 0, 176, 166)
+            Components.texture(Identifier.of("textures/gui/container/shulker_box.png"), 0, 0, 176, 166)
         ).child(
-                Containers.draggable(
-                        Sizing.content(), Sizing.content(),
-                        Containers.verticalFlow(Sizing.content(), Sizing.content())
-                                .child(Components.label(Text.literal("froge :)"))
-                                        .horizontalTextAlignment(HorizontalAlignment.CENTER)
-                                        .positioning(Positioning.absolute(0, -9))
-                                        .horizontalSizing(Sizing.fixed(100)))
-                                .child(Components.entity(Sizing.fixed(100), EntityType.FROG, frogeNbt).scale(.75f).allowMouseRotation(true).tooltip(Text.literal(":)")))
-                                .child(Containers.horizontalFlow(Sizing.fixed(100), Sizing.content())
-                                        .child(Components.button(Text.of("✔"), (ButtonComponent button) -> {
-                                            this.enableSlot(Integer.parseInt(selectBox.getText()));
-                                        }).tooltip(Text.literal("Enable")))
-                                        .child(selectBox.margins(Insets.horizontal(3)).tooltip(Text.literal("Slot Index")))
-                                        .child(Components.button(Text.of("❌"), (ButtonComponent button) -> {
-                                            this.disableSlot(Integer.parseInt(selectBox.getText()));
-                                        }).tooltip(Text.literal("Disable"))).verticalAlignment(VerticalAlignment.CENTER).horizontalAlignment(HorizontalAlignment.CENTER))
-                                .allowOverflow(true)
-                ).surface(Surface.DARK_PANEL).padding(Insets.of(5)).allowOverflow(true).zIndex(500).positioning(Positioning.absolute(100, 100))
+            Containers.draggable(
+                Sizing.content(), Sizing.content(),
+                Containers.verticalFlow(Sizing.content(), Sizing.content())
+                    .child(Components.label(Text.literal("froge :)"))
+                        .horizontalTextAlignment(HorizontalAlignment.CENTER)
+                        .positioning(Positioning.absolute(0, -9))
+                        .horizontalSizing(Sizing.fixed(100)))
+                    .child(Components.entity(Sizing.fixed(100), EntityType.FROG, frogeNbt).scale(.75f).allowMouseRotation(true).tooltip(Text.literal(":)")))
+                    .child(Containers.horizontalFlow(Sizing.fixed(100), Sizing.content())
+                        .child(Components.button(Text.of("✔"), (ButtonComponent button) -> {
+                            this.enableSlot(Integer.parseInt(selectBox.getText()));
+                        }).tooltip(Text.literal("Enable")))
+                        .child(selectBox.margins(Insets.horizontal(3)).tooltip(Text.literal("Slot Index")))
+                        .child(Components.button(Text.of("❌"), (ButtonComponent button) -> {
+                            this.disableSlot(Integer.parseInt(selectBox.getText()));
+                        }).tooltip(Text.literal("Disable"))).verticalAlignment(VerticalAlignment.CENTER).horizontalAlignment(HorizontalAlignment.CENTER))
+                    .allowOverflow(true)
+            ).surface(Surface.DARK_PANEL).padding(Insets.of(5)).allowOverflow(true).zIndex(500).positioning(Positioning.absolute(100, 100))
         ).child(
-                Containers.verticalScroll(Sizing.content(), Sizing.fill(50), Containers.verticalFlow(Sizing.content(), Sizing.content())
-                        .child(this.slotAsComponent(0).tooltip(Text.of("bruh")))
-                        .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.RED).endColor(Color.BLUE).fill(true).tooltip(Text.literal("very very long tooltip")))
-                        .child(this.slotAsComponent(1))
-                        .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.BLUE).endColor(Color.RED).fill(true))
-                        .child(this.slotAsComponent(2))
-                        .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.RED).endColor(Color.BLUE).fill(true))
-                        .child(this.slotAsComponent(3))
-                        .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.BLUE).endColor(Color.RED).fill(true))
-                ).positioning(Positioning.relative(75, 50)).surface(Surface.outline(0x77000000)).padding(Insets.of(1))
+            Containers.verticalScroll(Sizing.content(), Sizing.fill(50), Containers.verticalFlow(Sizing.content(), Sizing.content())
+                .child(this.slotAsComponent(0).tooltip(Text.of("bruh")))
+                .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.RED).endColor(Color.BLUE).fill(true).tooltip(Text.literal("very very long tooltip")))
+                .child(this.slotAsComponent(1))
+                .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.BLUE).endColor(Color.RED).fill(true))
+                .child(this.slotAsComponent(2))
+                .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.RED).endColor(Color.BLUE).fill(true))
+                .child(this.slotAsComponent(3))
+                .child(Components.box(Sizing.fixed(50), Sizing.fixed(35)).startColor(Color.BLUE).endColor(Color.RED).fill(true))
+            ).positioning(Positioning.relative(75, 50)).surface(Surface.outline(0x77000000)).padding(Insets.of(1))
         ).surface(Surface.VANILLA_TRANSLUCENT).verticalAlignment(VerticalAlignment.CENTER).horizontalAlignment(HorizontalAlignment.CENTER);
 
         rootComponent.child(
-                (numberLabel = Components.label(Text.literal(handler.epicNumber.get())))
-                        .positioning(Positioning.absolute(0, 0))
+            (numberLabel = Components.label(Text.literal(handler.epicNumber.get())))
+                .positioning(Positioning.absolute(0, 0))
         );
 
         handler.epicNumber.observe(value -> numberLabel.text(Text.literal(value)));

@@ -1,6 +1,7 @@
 package io.wispforest.owo.ui.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.wispforest.owo.Owo;
 import io.wispforest.owo.mixin.ui.access.ButtonWidgetAccessor;
 import io.wispforest.owo.mixin.ui.access.ClickableWidgetAccessor;
 import io.wispforest.owo.ui.core.Color;
@@ -15,6 +16,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.w3c.dom.Element;
@@ -25,9 +27,9 @@ import java.util.function.Consumer;
 
 public class ButtonComponent extends ButtonWidget {
 
-    public static final Identifier ACTIVE_TEXTURE = Identifier.of("owo", "button/active");
-    public static final Identifier HOVERED_TEXTURE = Identifier.of("owo", "button/hovered");
-    public static final Identifier DISABLED_TEXTURE = Identifier.of("owo", "button/disabled");
+    public static final Identifier ACTIVE_TEXTURE = Owo.id("button/active");
+    public static final Identifier HOVERED_TEXTURE = Owo.id("button/hovered");
+    public static final Identifier DISABLED_TEXTURE = Owo.id("button/disabled");
 
     protected Renderer renderer = Renderer.VANILLA;
     protected boolean textShadow = true;
@@ -105,8 +107,8 @@ public class ButtonComponent extends ButtonWidget {
             RenderSystem.enableDepthTest();
 
             var texture = button.active
-                    ? button.hovered ? HOVERED_TEXTURE : ACTIVE_TEXTURE
-                    : DISABLED_TEXTURE;
+                ? button.hovered ? HOVERED_TEXTURE : ACTIVE_TEXTURE
+                : DISABLED_TEXTURE;
             NinePatchTexture.draw(texture, matrices, button.getX(), button.getY(), button.width, button.height);
         };
 
@@ -153,23 +155,23 @@ public class ButtonComponent extends ButtonWidget {
                 case "flat" -> {
                     UIParsing.expectAttributes(rendererElement, "color", "hovered-color", "disabled-color");
                     yield flat(
-                            Color.parseAndPack(rendererElement.getAttributeNode("color")),
-                            Color.parseAndPack(rendererElement.getAttributeNode("hovered-color")),
-                            Color.parseAndPack(rendererElement.getAttributeNode("disabled-color"))
+                        Color.parseAndPack(rendererElement.getAttributeNode("color")),
+                        Color.parseAndPack(rendererElement.getAttributeNode("hovered-color")),
+                        Color.parseAndPack(rendererElement.getAttributeNode("disabled-color"))
                     );
                 }
                 case "texture" -> {
                     UIParsing.expectAttributes(rendererElement, "texture", "u", "v", "texture-width", "texture-height");
                     yield texture(
-                            UIParsing.parseIdentifier(rendererElement.getAttributeNode("texture")),
-                            UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("u")),
-                            UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("v")),
-                            UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("texture-width")),
-                            UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("texture-height"))
+                        UIParsing.parseIdentifier(rendererElement.getAttributeNode("texture")),
+                        UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("u")),
+                        UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("v")),
+                        UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("texture-width")),
+                        UIParsing.parseUnsignedInt(rendererElement.getAttributeNode("texture-height"))
                     );
                 }
                 default ->
-                        throw new UIModelParsingException("Unknown button renderer '" + rendererElement.getNodeName() + "'");
+                    throw new UIModelParsingException("Unknown button renderer '" + rendererElement.getNodeName() + "'");
             };
         }
     }

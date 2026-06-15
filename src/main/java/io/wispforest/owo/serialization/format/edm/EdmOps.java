@@ -109,7 +109,7 @@ public class EdmOps implements DynamicOps<EdmElement<?>>, ContextHolder {
 
     @Override
     public EdmElement<?> createMap(Stream<Pair<EdmElement<?>, EdmElement<?>>> map) {
-        return EdmElement.wrapMap(map.collect(Collectors.toMap(pair -> pair.getFirst().cast(), Pair::getSecond)));
+        return EdmElement.consumeMap(map.collect(Collectors.toMap(pair -> pair.getFirst().cast(), Pair::getSecond)));
     }
 
     @Override
@@ -119,12 +119,12 @@ public class EdmOps implements DynamicOps<EdmElement<?>>, ContextHolder {
         }
 
         if (map == empty()) {
-            return DataResult.success(EdmElement.wrapMap(Map.of(key.cast(), value)));
+            return DataResult.success(EdmElement.consumeMap(Map.of(key.cast(), value)));
         } else if (map.value() instanceof Map<?, ?> properMap) {
             var newMap = new HashMap<String, EdmElement<?>>((Map<String, ? extends EdmElement<?>>) properMap);
             newMap.put(key.cast(), value);
 
-            return DataResult.success(EdmElement.wrapMap(newMap));
+            return DataResult.success(EdmElement.consumeMap(newMap));
         } else {
             return DataResult.error(() -> "Not a map: " + map);
         }
@@ -213,7 +213,7 @@ public class EdmOps implements DynamicOps<EdmElement<?>>, ContextHolder {
             case OPTIONAL -> input.<Optional<EdmElement<?>>>cast().map(element -> this.convertTo(outOps, element)).orElse(outOps.empty());
             case SEQUENCE -> outOps.createList(input.<List<EdmElement<?>>>cast().stream().map(element -> this.convertTo(outOps, element)));
             case MAP ->
-                    outOps.createMap(input.<Map<String, EdmElement<?>>>cast().entrySet().stream().map(entry -> new Pair<>(outOps.createString(entry.getKey()), this.convertTo(outOps, entry.getValue()))));
+                outOps.createMap(input.<Map<String, EdmElement<?>>>cast().entrySet().stream().map(entry -> new Pair<>(outOps.createString(entry.getKey()), this.convertTo(outOps, entry.getValue()))));
         };
     }
 
@@ -223,7 +223,7 @@ public class EdmOps implements DynamicOps<EdmElement<?>>, ContextHolder {
             var newMap = new HashMap<String, EdmElement<?>>((Map<? extends String, ? extends EdmElement<?>>) map);
             newMap.remove(key);
 
-            return EdmElement.wrapMap(newMap);
+            return EdmElement.consumeMap(newMap);
         } else {
             return input;
         }

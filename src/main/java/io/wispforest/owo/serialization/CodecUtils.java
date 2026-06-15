@@ -17,10 +17,11 @@ import io.wispforest.endec.format.forwarding.ForwardingSerializer;
 import io.wispforest.endec.format.gson.GsonDeserializer;
 import io.wispforest.endec.format.gson.GsonEndec;
 import io.wispforest.endec.format.gson.GsonSerializer;
-import io.wispforest.owo.mixin.ForwardingDynamicOpsAccessor;
-import io.wispforest.owo.mixin.RegistryOpsAccessor;
+import io.wispforest.owo.mixin.serialization.ForwardingDynamicOpsAccessor;
+import io.wispforest.owo.mixin.serialization.RegistryOpsAccessor;
 import io.wispforest.owo.serialization.endec.EitherEndec;
 import io.wispforest.owo.serialization.endec.MinecraftEndecs;
+import io.wispforest.owo.serialization.endec.StructEitherEndec;
 import io.wispforest.owo.serialization.format.ContextHolder;
 import io.wispforest.owo.serialization.format.DynamicOpsWithContext;
 import io.wispforest.owo.serialization.format.edm.EdmOps;
@@ -28,6 +29,7 @@ import io.wispforest.owo.serialization.format.nbt.NbtDeserializer;
 import io.wispforest.owo.serialization.format.nbt.NbtEndec;
 import io.wispforest.owo.serialization.format.nbt.NbtSerializer;
 import io.wispforest.owo.util.Scary;
+import io.wispforest.owo.util.StackTraceSupplier;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
@@ -173,6 +175,26 @@ public class CodecUtils {
         return new EitherEndec<>(first, second, true);
     }
 
+    /**
+     * Create a structured endec which serializes an instance of {@link Either}, using {@code first}
+     * for the left and {@code second} for the right variant
+     * <p>
+     * In a self-describing format, the serialized representation is simply that of the endec of
+     * whichever variant is represented. In the general for non-self-described formats, the
+     * which variant is represented must also be stored
+     */
+    public static <F, S> StructEndec<Either<F, S>> eitherStructEndec(StructEndec<F> first, StructEndec<S> second) {
+        return new StructEitherEndec<>(first, second, false);
+    }
+
+    /**
+     * Like {@link #eitherStructEndec(StructEndec, StructEndec)}, but ensures when decoding from a self-described format
+     * that only {@code first} or {@code second}, but not both, succeed
+     */
+    public static <F, S> StructEndec<Either<F, S>> xorStructEndec(StructEndec<F> first, StructEndec<S> second) {
+        return new StructEitherEndec<>(first, second, true);
+    }
+
     //--
 
     /**
@@ -216,11 +238,6 @@ public class CodecUtils {
         };
     }
 
-    @Deprecated
-    public static <T> Codec<T> ofEndec(Endec<T> endec) {
-        return toCodec(endec);
-    }
-
     public static <T> Codec<T> toCodec(Endec<T> endec) {
         return toCodec(endec, SerializationContext.empty());
     }
@@ -250,7 +267,7 @@ public class CodecUtils {
                             );
                         });
 
-                        return structEndec.decode(context, LenientEdmDeserializer.of(EdmElement.wrapMap(map)));
+                        return structEndec.decode(context, LenientEdmDeserializer.of(EdmElement.consumeMap(map)));
                     }
                 });
             }
@@ -413,7 +430,7 @@ public class CodecUtils {
         try {
             return DataResult.success(action.get());
         } catch (Exception e) {
-            return DataResult.error(e::getMessage);
+            return DataResult.error(StackTraceSupplier.of(e));
         }
     }
 

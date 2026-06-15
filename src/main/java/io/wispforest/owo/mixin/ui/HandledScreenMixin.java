@@ -2,7 +2,6 @@ package io.wispforest.owo.mixin.ui;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.wispforest.owo.ui.base.BaseOwoHandledScreen;
 import io.wispforest.owo.util.pond.OwoSlotExtension;
 import net.minecraft.client.gui.DrawContext;
@@ -23,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class HandledScreenMixin extends Screen {
 
     @Unique
-    private static boolean owo$inOwoScreen = false;
+    private static boolean inOwoScreen = false;
 
     protected HandledScreenMixin(Text title) {
         super(title);
@@ -32,17 +31,17 @@ public abstract class HandledScreenMixin extends Screen {
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "render", at = @At("HEAD"))
     private void captureOwoState(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        owo$inOwoScreen = (Object) this instanceof BaseOwoHandledScreen<?, ?>;
+        inOwoScreen = (Object) this instanceof BaseOwoHandledScreen<?, ?>;
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void resetOwoState(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        owo$inOwoScreen = false;
+        inOwoScreen = false;
     }
 
     @Inject(method = "drawSlot", at = @At("HEAD"))
     private void injectSlotScissors(DrawContext context, Slot slot, CallbackInfo ci) {
-        if (!owo$inOwoScreen) return;
+        if (!inOwoScreen) return;
 
         var scissorArea = ((OwoSlotExtension) slot).owo$getScissorArea();
         if (scissorArea == null) return;
@@ -53,25 +52,12 @@ public abstract class HandledScreenMixin extends Screen {
 
     @Inject(method = "drawSlot", at = @At("RETURN"))
     private void clearSlotScissors(DrawContext context, Slot slot, CallbackInfo ci) {
-        if (!owo$inOwoScreen) return;
+        if (!inOwoScreen) return;
 
         var scissorArea = ((OwoSlotExtension) slot).owo$getScissorArea();
         if (scissorArea == null) return;
 
         GlStateManager._disableScissorTest();
-    }
-
-    @Inject(method = "drawSlotHighlight", at = @At(value = "HEAD"))
-    private static void enableSlotDepth(DrawContext context, int x, int y, int z, CallbackInfo ci) {
-        if (!owo$inOwoScreen) return;
-        RenderSystem.enableDepthTest();
-        context.getMatrices().translate(0, 0, 300);
-    }
-
-    @Inject(method = "drawSlotHighlight", at = @At("TAIL"))
-    private static void clearSlotDepth(DrawContext context, int x, int y, int z, CallbackInfo ci) {
-        if (!owo$inOwoScreen) return;
-        context.getMatrices().translate(0, 0, -300);
     }
 
     @ModifyVariable(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/SimpleOption;getValue()Ljava/lang/Object;", ordinal = 0), ordinal = 3)

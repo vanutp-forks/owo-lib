@@ -58,7 +58,13 @@ public final class Wisdom {
             "blod: I think I need to take a book out of your page",
             "blod: he her",
             "BasiqueEvangelist: what if... iphones",
-            "Cheese Cheese Creeper, the newest release from MC Basic"
+            "Cheese Cheese Creeper, the newest release from MC Basic",
+            "THIS ROOM IS SO VANILLA IT HURTS",
+            "Owo.currentServer()",
+            //Here's the 4 dots that were previously used in nested lang formatting:
+            "....",
+            "Weakeys",
+            "glisco: It is only sometimes a hazard, so I would say it is a casino"
     );
 
     public static void spread() {

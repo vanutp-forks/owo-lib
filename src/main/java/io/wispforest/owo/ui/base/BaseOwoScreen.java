@@ -124,8 +124,8 @@ public abstract class BaseOwoScreen<R extends ParentComponent> extends Screen im
         if (this.uiAdapter == null) return false;
 
         if ((modifiers & GLFW.GLFW_MOD_CONTROL) == 0
-                && this.uiAdapter.rootComponent.focusHandler().focused() instanceof GreedyInputComponent inputComponent
-                && inputComponent.onKeyPress(keyCode, scanCode, modifiers)) {
+            && this.uiAdapter.rootComponent.focusHandler().focused() instanceof GreedyInputComponent inputComponent
+            && inputComponent.onKeyPress(keyCode, scanCode, modifiers)) {
             return true;
         }
 

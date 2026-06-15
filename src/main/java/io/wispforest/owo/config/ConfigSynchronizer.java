@@ -38,7 +38,7 @@ import java.util.function.BiConsumer;
 
 public class ConfigSynchronizer {
 
-    public static final Identifier CONFIG_SYNC_CHANNEL = Identifier.of("owo", "config_sync");
+    public static final Identifier CONFIG_SYNC_CHANNEL = Owo.id("config_sync");
 
     private static final Map<ClientConnection, Map<String, Map<Option.Key, Object>>> CLIENT_OPTION_STORAGE = new WeakHashMap<>();
 

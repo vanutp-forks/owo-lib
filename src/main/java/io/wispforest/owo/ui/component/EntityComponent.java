@@ -11,7 +11,10 @@ import io.wispforest.owo.ui.parsing.UIModelParsingException;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.util.pond.OwoEntityRenderDispatcherExtension;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.*;
+import net.minecraft.client.network.ClientConnectionState;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -248,16 +251,16 @@ public class EntityComponent<E extends Entity> extends BaseComponent {
 
         protected RenderablePlayerEntity(GameProfile profile) {
             super(MinecraftClient.getInstance(),
-                    MinecraftClient.getInstance().world,
-                    new ClientPlayNetworkHandler(MinecraftClient.getInstance(),
-                            new ClientConnection(NetworkSide.CLIENTBOUND),
-                            new ClientConnectionState(
-                                    profile, new WorldSession(TelemetrySender.NOOP, false, Duration.ZERO, ""),
-                                    MinecraftClient.getInstance().world.getRegistryManager().toImmutable(),
-                                    MinecraftClient.getInstance().world.getEnabledFeatures(),
-                                    "Wisp Forest Enterprises", null, null, Map.of(), null, false, Map.of(), ServerLinks.EMPTY
+                MinecraftClient.getInstance().world,
+                new ClientPlayNetworkHandler(MinecraftClient.getInstance(),
+                    new ClientConnection(NetworkSide.CLIENTBOUND),
+                    new ClientConnectionState(
+                        profile, new WorldSession(TelemetrySender.NOOP, false, Duration.ZERO, ""),
+                        MinecraftClient.getInstance().world.getRegistryManager().toImmutable(),
+                        MinecraftClient.getInstance().world.getEnabledFeatures(),
+                        "Wisp Forest Enterprises", null, null, Map.of(), null, false, Map.of(), ServerLinks.EMPTY
                     )),
-                    null, null, false, false
+                null, null, false, false
             );
 
             this.skinTextures = DefaultSkinHelper.getSkinTextures(profile.getId());

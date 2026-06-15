@@ -18,10 +18,10 @@ public class MakeLootContainerCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         dispatcher.register(literal("make-loot-container")
-                .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
-                        .then(argument("loot_table", IdentifierArgumentType.identifier())
-                                .suggests(LootCommand.SUGGESTION_PROVIDER)
-                                .executes(MakeLootContainerCommand::execute))));
+            .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
+                .then(argument("loot_table", IdentifierArgumentType.identifier())
+                    .suggests(LootCommand.SUGGESTION_PROVIDER)
+                    .executes(MakeLootContainerCommand::execute))));
     }
 
     private static int execute(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {

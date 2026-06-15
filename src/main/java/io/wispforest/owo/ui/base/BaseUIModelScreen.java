@@ -48,8 +48,8 @@ public abstract class BaseUIModelScreen<R extends ParentComponent> extends BaseO
         this.model = providedModel;
 
         this.modelId = source instanceof DataSource.AssetDataSource assetSource
-                ? assetSource.assetPath()
-                : null;
+            ? assetSource.assetPath()
+            : null;
     }
 
     protected BaseUIModelScreen(Class<R> rootComponentClass, Identifier modelId) {

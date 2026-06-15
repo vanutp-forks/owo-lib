@@ -2,7 +2,6 @@ package io.wispforest.owo.particles;
 
 import io.wispforest.owo.util.VectorRandomUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;

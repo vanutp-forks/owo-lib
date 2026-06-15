@@ -1,5 +1,6 @@
 package io.wispforest.owo.ui.component;
 
+import io.wispforest.owo.Owo;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.CursorStyle;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 public class SmallCheckboxComponent extends BaseComponent {
 
-    public static final Identifier TEXTURE = Identifier.of("owo", "textures/gui/smol_checkbox.png");
+    public static final Identifier TEXTURE = Owo.id("textures/gui/smol_checkbox.png");
 
     protected final EventStream<OnChanged> checkedEvents = OnChanged.newStream();
 
@@ -47,17 +48,17 @@ public class SmallCheckboxComponent extends BaseComponent {
             context.drawText(MinecraftClient.getInstance().textRenderer, this.label.get(), this.x + 13 + 2, this.y + 3, Color.WHITE.argb(), this.labelShadow);
         }
 
-        context.drawTexture(TEXTURE, this.x, this.y, 13, 13, 0, 0, 13, 13, 32, 16);
+        context.drawTexture(TEXTURE, this.x, this.y, 0, 0, 13, 13, 13, 13, 32, 16);
         if (this.checked) {
-            context.drawTexture(TEXTURE, this.x, this.y, 13, 13, 16, 0, 13, 13, 32, 16);
+            context.drawTexture(TEXTURE, this.x, this.y, 16, 0, 13, 13, 13, 13, 32, 16);
         }
     }
 
     @Override
     protected int determineHorizontalContentSize(Sizing sizing) {
         return this.label.get() != null
-                ? 13 + 2 + MinecraftClient.getInstance().textRenderer.getWidth(this.label.get())
-                : 13;
+            ? 13 + 2 + MinecraftClient.getInstance().textRenderer.getWidth(this.label.get())
+            : 13;
     }
 
     @Override

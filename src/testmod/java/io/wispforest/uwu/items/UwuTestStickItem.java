@@ -42,11 +42,11 @@ import net.minecraft.world.World;
 public class UwuTestStickItem extends Item {
 
     private static final ComponentType<Text> TEXT_COMPONENT = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of("uwu", "text"),
-            ComponentType.<Text>builder()
-                    .endec(MinecraftEndecs.TEXT)
-                    .build()
+        Registries.DATA_COMPONENT_TYPE,
+        Identifier.of("uwu", "text"),
+        ComponentType.<Text>builder()
+            .endec(MinecraftEndecs.TEXT)
+            .build()
     );
 
     private static final Codec<String> THIS_CODEC_NEEDS_REGISTRIES = new Codec<>() {
@@ -67,13 +67,13 @@ public class UwuTestStickItem extends Item {
 
     public UwuTestStickItem() {
         super(new Item.Settings()
-                .group(() -> Uwu.SIX_TAB_GROUP).tab(3).maxCount(1)
-                .trackUsageStat()
-                .stackGenerator(OwoItemGroup.DEFAULT_STACK_GENERATOR.andThen((item, stacks) -> {
-                    final var stack = new ItemStack(item);
-                    stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("the stick of the test").styled(style -> style.withItalic(false)));
-                    stacks.add(stack);
-                })));
+            .group(() -> Uwu.SIX_TAB_GROUP).tab(3).maxCount(1)
+            .trackUsageStat()
+            .stackGenerator(OwoItemGroup.DEFAULT_STACK_GENERATOR.andThen((item, stacks) -> {
+                final var stack = new ItemStack(item);
+                stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("the stick of the test").styled(style -> style.withItalic(false)));
+                stacks.add(stack);
+            })));
 
         Uwu.CHANNEL.registerServerbound(ThatPacket.class, StructEndecBuilder.of(YEP_SAME_HERE.fieldOf("mhmm", ThatPacket::mhmm), ThatPacket::new), (message, access) -> {
             System.out.println("that's a packet received alright: " + message.mhmm);
@@ -113,15 +113,15 @@ public class UwuTestStickItem extends Item {
             try {
                 var stack = context.getStack();
                 var data = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt()
-                        .get(SerializationContext.attributes(RegistriesAttribute.of(context.getWorld().getRegistryManager())), KYED);
+                    .get(SerializationContext.attributes(RegistriesAttribute.of(context.getWorld().getRegistryManager())), KYED);
 
                 context.getPlayer().sendMessage(Text.literal("current: " + data));
 
                 stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, nbt -> {
                     return nbt.apply(nbtCompound -> nbtCompound.put(
-                            SerializationContext.attributes(RegistriesAttribute.of(context.getWorld().getRegistryManager())),
-                            KYED,
-                            String.valueOf(context.getWorld().random.nextInt(10000))
+                        SerializationContext.attributes(RegistriesAttribute.of(context.getWorld().getRegistryManager())),
+                        KYED,
+                        String.valueOf(context.getWorld().random.nextInt(10000))
                     ));
                 });
                 context.getPlayer().sendMessage(Text.literal("modified"));

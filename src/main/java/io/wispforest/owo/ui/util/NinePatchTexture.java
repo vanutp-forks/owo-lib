@@ -1,5 +1,6 @@
 package io.wispforest.owo.ui.util;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.wispforest.endec.Endec;
 import io.wispforest.endec.StructEndec;
 import io.wispforest.endec.impl.StructEndecBuilder;
@@ -10,6 +11,7 @@ import io.wispforest.owo.serialization.endec.MinecraftEndecs;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.PositionedRectangle;
 import io.wispforest.owo.ui.core.Size;
+import io.wispforest.owo.ui.core.Color;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -50,10 +52,18 @@ public class NinePatchTexture {
     }
 
     public void draw(OwoUIDrawContext context, PositionedRectangle rectangle) {
-        this.draw(context, rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height());
+        this.draw(context, rectangle, Color.WHITE);
+    }
+
+    public void draw(OwoUIDrawContext context, PositionedRectangle rectangle, Color color) {
+        this.draw(context, rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height(), color);
     }
 
     public void draw(OwoUIDrawContext context, int x, int y, int width, int height) {
+        this.draw(context, x, y, width, height, Color.WHITE);
+    }
+
+    public void draw(OwoUIDrawContext context, int x, int y, int width, int height, Color color) {
         context.recordQuads();
 
         int rightEdge = this.cornerPatchSize.width() + this.centerPatchSize.width();
@@ -69,7 +79,11 @@ public class NinePatchTexture {
         } else {
             this.drawStretched(context, x, y, width, height);
         }
+
+        var shaderColor = RenderSystem.getShaderColor().clone();
+        RenderSystem.setShaderColor(color.red(), color.green(), color.blue(), color.alpha());
         context.submitQuads();
+        RenderSystem.setShaderColor(shaderColor[0], shaderColor[1], shaderColor[2], shaderColor[3]);
     }
 
     protected void drawStretched(OwoUIDrawContext context, int x, int y, int width, int height) {
@@ -142,11 +156,19 @@ public class NinePatchTexture {
     }
 
     public static void draw(Identifier texture, OwoUIDrawContext context, int x, int y, int width, int height) {
-        ifPresent(texture, ninePatchTexture -> ninePatchTexture.draw(context, x, y, width, height));
+        draw(texture, context, x, y, width, height, Color.WHITE);
+    }
+
+    public static void draw(Identifier texture, OwoUIDrawContext context, int x, int y, int width, int height, Color color) {
+        ifPresent(texture, ninePatchTexture -> ninePatchTexture.draw(context, x, y, width, height, color));
     }
 
     public static void draw(Identifier texture, OwoUIDrawContext context, PositionedRectangle rectangle) {
         ifPresent(texture, ninePatchTexture -> ninePatchTexture.draw(context, rectangle));
+    }
+
+    public static void draw(Identifier texture, OwoUIDrawContext context, PositionedRectangle rectangle, Color color) {
+        ifPresent(texture, ninePatchTexture -> ninePatchTexture.draw(context, rectangle, color));
     }
 
     private static void ifPresent(Identifier texture, Consumer<NinePatchTexture> action) {

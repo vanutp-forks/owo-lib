@@ -8,16 +8,20 @@ import io.wispforest.owo.ui.parsing.UIModelParsingException;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.NinePatchTexture;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.tooltip.TooltipBackgroundRenderer;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public interface Surface {
+
+    Surface BLANK = (context, component) -> {};
 
     Surface PANEL = (context, component) -> {
         context.drawPanel(component.x(), component.y(), component.width(), component.height(), false);
@@ -33,13 +37,10 @@ public interface Surface {
 
     Surface VANILLA_TRANSLUCENT = (context, component) -> {
         context.drawGradientRect(
-                component.x(), component.y(), component.width(), component.height(),
-                0xC0101010, 0xC0101010, 0xD0101010, 0xD0101010
+            component.x(), component.y(), component.width(), component.height(),
+            0xC0101010, 0xC0101010, 0xD0101010, 0xD0101010
         );
     };
-
-    Surface OPTIONS_BACKGROUND = Surface.panorama(ScreenAccessor.owo$ROTATING_PANORAMA_RENDERER(), false)
-            .and(Surface.blur(5, 10));
 
     Surface TOOLTIP = (context, component) -> {
         context.draw(() -> {
@@ -66,6 +67,10 @@ public interface Surface {
         };
     }
 
+    static Surface optionsBackground() {
+        return Surface.vanillaPanorama(false).and(Surface.blur(5, 10));
+    }
+
     static Surface vanillaPanorama(boolean alwaysVisible) {
         return panorama(new RotatingCubeMapRenderer(ScreenAccessor.owo$PANORAMA_RENDERER()), alwaysVisible);
     }
@@ -90,10 +95,10 @@ public interface Surface {
             var height = component.height();
 
             RenderSystem.viewport(
-                    (int) (x * scale),
-                    (int) (window.getFramebufferHeight() - (y * scale) - height * scale),
-                    MathHelper.clamp((int) (width * scale), 0, window.getFramebufferWidth()),
-                    MathHelper.clamp((int) (height * scale), 0, window.getFramebufferHeight())
+                (int) (x * scale),
+                (int) (window.getFramebufferHeight() - (y * scale) - height * scale),
+                MathHelper.clamp((int) (width * scale), 0, window.getFramebufferWidth()),
+                MathHelper.clamp((int) (height * scale), 0, window.getFramebufferHeight())
             );
 
             var delta = client.getRenderTickCounter().getLastDuration();
@@ -107,8 +112,6 @@ public interface Surface {
             RenderSystem.viewport(prevX, prevY, prevWidth, prevHeight);
         };
     }
-
-    Surface BLANK = (context, component) -> {};
 
     static Surface flat(int color) {
         return (context, component) -> context.fill(component.x(), component.y(), component.x() + component.width(), component.y() + component.height(), color);
@@ -127,12 +130,12 @@ public interface Surface {
     static Surface panelWithInset(int insetWidth) {
         return Surface.PANEL.and((context, component) -> {
             NinePatchTexture.draw(
-                    OwoUIDrawContext.PANEL_INSET_NINE_PATCH_TEXTURE,
-                    context,
-                    component.x() + insetWidth,
-                    component.y() + insetWidth,
-                    component.width() - insetWidth * 2,
-                    component.height() - insetWidth * 2
+                OwoUIDrawContext.PANEL_INSET_NINE_PATCH_TEXTURE,
+                context,
+                component.x() + insetWidth,
+                component.y() + insetWidth,
+                component.width() - insetWidth * 2,
+                component.height() - insetWidth * 2
             );
         });
     }
@@ -153,25 +156,25 @@ public interface Surface {
         for (var child : children) {
             surface = switch (child.getNodeName()) {
                 case "panel" -> surface.and(child.getAttribute("dark").equalsIgnoreCase("true")
-                        ? DARK_PANEL
-                        : PANEL);
+                    ? DARK_PANEL
+                    : PANEL);
                 case "tiled" -> {
                     UIParsing.expectAttributes(child, "texture-width", "texture-height");
                     yield surface.and(tiled(
-                            UIParsing.parseIdentifier(child),
-                            UIParsing.parseUnsignedInt(child.getAttributeNode("texture-width")),
-                            UIParsing.parseUnsignedInt(child.getAttributeNode("texture-height")))
+                        UIParsing.parseIdentifier(child),
+                        UIParsing.parseUnsignedInt(child.getAttributeNode("texture-width")),
+                        UIParsing.parseUnsignedInt(child.getAttributeNode("texture-height")))
                     );
                 }
                 case "blur" -> {
                     UIParsing.expectAttributes(child, "size", "quality");
                     yield surface.and(blur(
-                            UIParsing.parseFloat(child.getAttributeNode("quality")),
-                            UIParsing.parseFloat(child.getAttributeNode("size"))
+                        UIParsing.parseFloat(child.getAttributeNode("quality")),
+                        UIParsing.parseFloat(child.getAttributeNode("size"))
                     ));
                 }
                 case "panel-with-inset" -> surface.and(panelWithInset(UIParsing.parseUnsignedInt(child)));
-                case "options-background" -> surface.and(OPTIONS_BACKGROUND);
+                case "options-background" -> surface.and(optionsBackground());
                 case "vanilla-translucent" -> surface.and(VANILLA_TRANSLUCENT);
                 case "panel-inset" -> surface.and(PANEL_INSET);
                 case "tooltip" -> surface.and(TOOLTIP);

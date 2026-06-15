@@ -93,8 +93,8 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
 
         var textures = contextGroup.getTabTextures();
         return contextGroup.getRow() == ItemGroup.Row.TOP
-                ? selectedTab == contextGroup ? contextGroup.getColumn() == 0 ? textures.topSelectedFirstColumn() : textures.topSelected() : textures.topUnselected()
-                : selectedTab == contextGroup ? contextGroup.getColumn() == 0 ? textures.bottomSelectedFirstColumn() : textures.bottomSelected() : textures.bottomUnselected();
+            ? selectedTab == contextGroup ? contextGroup.getColumn() == 0 ? textures.topSelectedFirstColumn() : textures.topSelected() : textures.topUnselected()
+            : selectedTab == contextGroup ? contextGroup.getColumn() == 0 ? textures.bottomSelectedFirstColumn() : textures.bottomSelected() : textures.bottomUnselected();
     }
 
     @Inject(method = "renderTabIcon", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup;getIcon()Lnet/minecraft/item/ItemStack;"), locals = LocalCapture.CAPTURE_FAILHARD)
@@ -122,9 +122,9 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
             return singleActiveTab.name();
         } else {
             return Text.translatable(
-                    "text.owo.itemGroup.tab_template",
-                    owoGroup.getDisplayName(),
-                    singleActiveTab.name()
+                "text.owo.itemGroup.tab_template",
+                owoGroup.getDisplayName(),
+                singleActiveTab.name()
             );
         }
     }
@@ -184,12 +184,12 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
         for (var button : this.owoButtons) {
             if (button.trulyHovered()) {
                 context.drawTooltip(
-                        this.textRenderer,
-                        button.isTab() && ((OwoItemGroup) selectedTab).canSelectMultipleTabs()
-                                ? List.of(button.getMessage(), Text.translatable("text.owo.itemGroup.select_hint"))
-                                : List.of(button.getMessage()),
-                        mouseX,
-                        mouseY
+                    this.textRenderer,
+                    button.isTab() && ((OwoItemGroup) selectedTab).canSelectMultipleTabs()
+                        ? List.of(button.getMessage(), Text.translatable("text.owo.itemGroup.select_hint"))
+                        : List.of(button.getMessage()),
+                    mouseX,
+                    mouseY
                 );
                 anyButtonHovered = true;
             }

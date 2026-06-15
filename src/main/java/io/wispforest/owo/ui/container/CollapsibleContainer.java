@@ -22,11 +22,11 @@ import java.util.List;
 public class CollapsibleContainer extends FlowLayout {
 
     public static final Surface SURFACE = (context, component) -> context.fill(
-            component.x() + 5,
-            component.y(),
-            component.x() + 6,
-            component.y() + component.height(),
-            0x77FFFFFF
+        component.x() + 5,
+        component.y(),
+        component.x() + 6,
+        component.y() + component.height(),
+        0x77FFFFFF
     );
 
     protected final EventStream<OnToggled> toggledEvents = OnToggled.newStream();
@@ -167,8 +167,8 @@ public class CollapsibleContainer extends FlowLayout {
         var title = textElement == null ? Text.empty() : UIParsing.parseText(textElement);
 
         return element.getAttribute("expanded").equals("true")
-                ? Containers.collapsible(Sizing.content(), Sizing.content(), title, true)
-                : Containers.collapsible(Sizing.content(), Sizing.content(), title, false);
+            ? Containers.collapsible(Sizing.content(), Sizing.content(), title, true)
+            : Containers.collapsible(Sizing.content(), Sizing.content(), title, false);
     }
 
     public interface OnToggled {

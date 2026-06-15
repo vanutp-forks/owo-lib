@@ -81,8 +81,8 @@ public class TextAreaComponent extends EditBoxWidget {
 
         if (this.displayCharCount.get()) {
             var text = this.editBox.hasMaxLength()
-                    ? Text.translatable("gui.multiLineEditBox.character_limit", this.editBox.getText().length(), this.editBox.getMaxLength())
-                    : Text.literal(String.valueOf(this.editBox.getText().length()));
+                ? Text.translatable("gui.multiLineEditBox.character_limit", this.editBox.getText().length(), this.editBox.getMaxLength())
+                : Text.literal(String.valueOf(this.editBox.getText().length()));
 
             var textRenderer = MinecraftClient.getInstance().textRenderer;
             context.drawTextWithShadow(textRenderer, text, this.getX() + this.width - textRenderer.getWidth(text), this.getY() + this.height + 3, 0xa0a0a0);
@@ -117,7 +117,7 @@ public class TextAreaComponent extends EditBoxWidget {
         int cursor = this.editBox.getCursor();
         int selection = ((EditBoxAccessor) this.editBox).owo$getSelectionEnd();
 
-        ((EditBoxAccessor) this.editBox).owo$setWidth(this.width() - this.getPaddingDoubled() - 9);
+        ((EditBoxAccessor) this.editBox).owo$setWidth(this.width() - this.getPadding() - 9);
         this.editBox.setText(this.getText());
 
         super.inflate(space);

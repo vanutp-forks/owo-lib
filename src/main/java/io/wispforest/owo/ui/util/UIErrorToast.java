@@ -88,7 +88,6 @@ public class UIErrorToast implements Toast {
         return startTime > 10000 ? Visibility.HIDE : Visibility.SHOW;
     }
 
-
     @Override
     public int getHeight() {
         return 6 + this.errorMessage.size() * 11;

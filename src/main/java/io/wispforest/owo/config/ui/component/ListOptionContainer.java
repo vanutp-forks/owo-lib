@@ -64,8 +64,8 @@ public class ListOptionContainer<T> extends CollapsibleContainer implements Opti
 
                     var lastEntry = (ParentComponent) this.collapsibleChildren.get(this.collapsibleChildren.size() - 1);
                     this.focusHandler().focus(
-                            lastEntry.children().get(lastEntry.children().size() - 1),
-                            FocusSource.MOUSE_CLICK
+                        lastEntry.children().get(lastEntry.children().size() - 1),
+                        FocusSource.MOUSE_CLICK
                     );
 
                     return true;

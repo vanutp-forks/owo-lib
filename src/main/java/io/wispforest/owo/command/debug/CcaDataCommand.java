@@ -18,7 +18,7 @@ public class CcaDataCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(literal("cca-data").executes(CcaDataCommand::executeDumpAll)
-                .then(argument("path", NbtPathArgumentType.nbtPath()).executes(CcaDataCommand::executeDumpPath)));
+            .then(argument("path", NbtPathArgumentType.nbtPath()).executes(CcaDataCommand::executeDumpPath)));
     }
 
     private static int executeDumpAll(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -35,7 +35,7 @@ public class CcaDataCommand {
         final var player = context.getSource().getPlayer();
         final var path = NbtPathArgumentType.getNbtPath(context, "path");
         final var nbt = path.get(player.writeNbt(new NbtCompound())
-                .getCompound("cardinal_components")).iterator().next();
+            .getCompound("cardinal_components")).iterator().next();
 
         context.getSource().sendFeedback(() -> TextOps.concat(Owo.PREFIX, TextOps.withFormatting("CCA Data:", Formatting.GRAY)), false);
         context.getSource().sendFeedback(() -> NbtHelper.toPrettyPrintedText(nbt), false);

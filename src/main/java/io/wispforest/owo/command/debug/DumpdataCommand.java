@@ -86,12 +86,12 @@ public class DumpdataCommand {
         final var player = source.getPlayer();
 
         final var target = ProjectileUtil.raycast(
-                player,
-                player.getCameraPosVec(0),
-                player.getCameraPosVec(0).add(player.getRotationVec(0).multiply(5)),
-                player.getBoundingBox().stretch(player.getRotationVec(0).multiply(5)).expand(1),
-                entity -> true,
-                5 * 5);
+            player,
+            player.getCameraPosVec(0),
+            player.getCameraPosVec(0).add(player.getRotationVec(0).multiply(5)),
+            player.getBoundingBox().stretch(player.getRotationVec(0).multiply(5)).expand(1),
+            entity -> true,
+            5 * 5);
 
         if (target == null || target.getType() != HitResult.Type.ENTITY) {
             source.sendError(TextOps.concat(Owo.PREFIX, Text.literal("You're not looking at an entity")));
@@ -104,7 +104,7 @@ public class DumpdataCommand {
         sendIdentifier(source, entity.getType(), Registries.ENTITY_TYPE);
 
         feedback(source, TextOps.withFormatting("NBT" + formatPath(path) + ": ", Formatting.GRAY)
-                .append(NbtHelper.toPrettyPrintedText(getPath(entity.writeNbt(new NbtCompound()), path))));
+            .append(NbtHelper.toPrettyPrintedText(getPath(entity.writeNbt(new NbtCompound()), path))));
 
         feedback(source, TextOps.withFormatting("-----------------------", Formatting.GRAY));
 
@@ -124,7 +124,7 @@ public class DumpdataCommand {
 
         final var pos = ((BlockHitResult) target).getBlockPos();
 
-        final var blockState = player.getWorld().getBlockState(pos);
+        final var blockState = player.getEntityWorld().getBlockState(pos);
         final var blockStateString = blockState.toString();
 
         informationHeader(source, "Block");
@@ -144,7 +144,7 @@ public class DumpdataCommand {
             feedback(source, TextOps.withFormatting("No state properties", Formatting.GRAY));
         }
 
-        final var blockEntity = player.getWorld().getBlockEntity(pos);
+        final var blockEntity = player.getEntityWorld().getBlockEntity(pos);
         if (blockEntity != null) {
             feedback(source, TextOps.withFormatting("Block Entity NBT" + formatPath(path) + ": ", Formatting.GRAY)
                     .append(NbtHelper.toPrettyPrintedText(getPath(blockEntity.createNbt(player.getRegistryManager()), path))));

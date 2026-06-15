@@ -9,13 +9,12 @@ import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,8 +29,12 @@ public class ReiUIAdapter<T extends ParentComponent> extends Widget {
         this.adapter = OwoUIAdapter.createWithoutScreen(bounds.x, bounds.y, bounds.width, bounds.height, rootComponentMaker);
         this.adapter.inspectorZOffset = 900;
 
-        if (MinecraftClient.getInstance().currentScreen != null) {
-            currentREIAdapters.computeIfAbsent(MinecraftClient.getInstance().currentScreen, screen -> new HashSet<>()).add(this.adapter);
+        var screenWithREI = MinecraftClient.getInstance().currentScreen;
+
+        if (screenWithREI != null) {
+            NeoForge.EVENT_BUS.addListener((ScreenEvent.Closing event) -> {
+                if (event.getScreen() == screenWithREI) this.adapter.dispose();
+            });
         }
     }
 
@@ -95,7 +98,7 @@ public class ReiUIAdapter<T extends ParentComponent> extends Widget {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float partialTicks) {
-        ScissorStack.push(this.adapter.x(), this.adapter.y(), this.adapter.width(), this.adapter.height(), context.getMatrices());
+        ScissorStack.push(this.adapter.x(), this.adapter.y(), this.adapter.width(), this.adapter.height(), context);
         this.adapter.render(context, mouseX, mouseY, partialTicks);
         ScissorStack.pop();
 
@@ -105,15 +108,5 @@ public class ReiUIAdapter<T extends ParentComponent> extends Widget {
     @Override
     public List<? extends Element> children() {
         return List.of();
-    }
-
-    private static final Map<Screen, Set<OwoUIAdapter<?>>> currentREIAdapters = new HashMap<>();
-
-    static {
-        NeoForge.EVENT_BUS.<ScreenEvent.Closing>addListener((event) -> {
-            var adapters = currentREIAdapters.remove(event.getScreen());
-
-            if (adapters != null) adapters.forEach(OwoUIAdapter::dispose);
-        });
     }
 }

@@ -161,10 +161,10 @@ public class ItemComponent extends BaseComponent {
 
         var tooltip = new ArrayList<TooltipComponent>();
         stack.getTooltip(context, player, type)
-                .stream()
-                .map(Text::asOrderedText)
-                .map(TooltipComponent::of)
-                .forEach(tooltip::add);
+            .stream()
+            .map(Text::asOrderedText)
+            .map(TooltipComponent::of)
+            .forEach(tooltip::add);
 
         try {
             stack.getTooltipData().ifPresent(data -> tooltip.add(1, TooltipComponent.of(data)));

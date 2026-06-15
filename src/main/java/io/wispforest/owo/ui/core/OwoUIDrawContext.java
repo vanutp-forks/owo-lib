@@ -3,7 +3,7 @@ package io.wispforest.owo.ui.core;
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.wispforest.owo.client.OwoClient;
-import io.wispforest.owo.mixin.ui.DrawContextInvoker;
+import io.wispforest.owo.mixin.ui.access.DrawContextAccessor;
 import io.wispforest.owo.ui.event.WindowResizeCallback;
 import io.wispforest.owo.ui.util.NinePatchTexture;
 import io.wispforest.owo.util.pond.OwoTessellatorExtension;
@@ -39,14 +39,14 @@ public class OwoUIDrawContext extends DrawContext {
 
     private boolean recording = false;
 
-    private OwoUIDrawContext(MinecraftClient client, VertexConsumerProvider.Immediate vertexConsumers) {
+    protected OwoUIDrawContext(MinecraftClient client, VertexConsumerProvider.Immediate vertexConsumers) {
         super(client, vertexConsumers);
     }
 
     public static OwoUIDrawContext of(DrawContext context) {
         var owoContext = new OwoUIDrawContext(MinecraftClient.getInstance(), context.getVertexConsumers());
-        ((DrawContextInvoker) owoContext).owo$setScissorStack(((DrawContextInvoker) context).owo$getScissorStack());
-        ((DrawContextInvoker) owoContext).owo$setMatrices(((DrawContextInvoker) context).owo$getMatrices());
+        ((DrawContextAccessor) owoContext).owo$setScissorStack(((DrawContextAccessor) context).owo$getScissorStack());
+        ((DrawContextAccessor) owoContext).owo$setMatrices(((DrawContextAccessor) context).owo$getMatrices());
 
         return owoContext;
     }
@@ -214,7 +214,7 @@ public class OwoUIDrawContext extends DrawContext {
         for (int i = segments; i >= 0; i--) {
             double theta = Math.toRadians(angleFrom) + i * angleStep;
             buffer.vertex(matrix, (float) (centerX - Math.cos(theta) * radius), (float) (centerY - Math.sin(theta) * radius), 0)
-                    .color(vColor);
+                .color(vColor);
         }
 
         RenderSystem.enableBlend();
@@ -243,9 +243,9 @@ public class OwoUIDrawContext extends DrawContext {
             double theta = Math.toRadians(angleFrom) + i * angleStep;
 
             buffer.vertex(matrix, (float) (centerX - Math.cos(theta) * outerRadius), (float) (centerY - Math.sin(theta) * outerRadius), 0)
-                    .color(outColor);
+                .color(outColor);
             buffer.vertex(matrix, (float) (centerX - Math.cos(theta) * innerRadius), (float) (centerY - Math.sin(theta) * innerRadius), 0)
-                    .color(inColor);
+                .color(inColor);
         }
 
         RenderSystem.enableBlend();
@@ -256,7 +256,7 @@ public class OwoUIDrawContext extends DrawContext {
     }
 
     public void drawTooltip(TextRenderer textRenderer, int x, int y, List<TooltipComponent> components) {
-        ((DrawContextInvoker) this).owo$renderTooltipFromComponents(textRenderer, components, x, y, HoveredTooltipPositioner.INSTANCE);
+        ((DrawContextAccessor) this).owo$renderTooltipFromComponents(textRenderer, components, x, y, HoveredTooltipPositioner.INSTANCE);
     }
 
     // --- debug rendering ---
@@ -304,7 +304,7 @@ public class OwoUIDrawContext extends DrawContext {
         for (var child : children) {
             if (child instanceof ParentComponent parentComponent) {
                 this.drawInsets(parentComponent.x(), parentComponent.y(), parentComponent.width(),
-                        parentComponent.height(), parentComponent.padding().get().inverted(), 0xA70CECDD);
+                    parentComponent.height(), parentComponent.padding().get().inverted(), 0xA70CECDD);
             }
 
             final var margins = child.margins().get();
@@ -328,7 +328,7 @@ public class OwoUIDrawContext extends DrawContext {
 
                 final var nameText = Text.of(child.getClass().getSimpleName() + (child.id() != null ? " '" + child.id() + "'" : ""));
                 final var descriptor = Text.literal(child.x() + "," + child.y() + " (" + child.width() + "," + child.height() + ")"
-                        + " <" + margins.top() + "," + margins.bottom() + "," + margins.left() + "," + margins.right() + "> ");
+                    + " <" + margins.top() + "," + margins.bottom() + "," + margins.left() + "," + margins.right() + "> ");
                 if (child instanceof ParentComponent parentComponent) {
                     var padding = parentComponent.padding().get();
                     descriptor.append(" >" + padding.top() + "," + padding.bottom() + "," + padding.left() + "," + padding.right() + "<");
@@ -362,9 +362,9 @@ public class OwoUIDrawContext extends DrawContext {
 
                 final var client = MinecraftClient.getInstance();
                 INSTANCE.init(
-                        client,
-                        client.getWindow().getScaledWidth(),
-                        client.getWindow().getScaledHeight()
+                    client,
+                    client.getWindow().getScaledWidth(),
+                    client.getWindow().getScaledHeight()
                 );
             }
 

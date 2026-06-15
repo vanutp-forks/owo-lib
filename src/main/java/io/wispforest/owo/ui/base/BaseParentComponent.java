@@ -4,7 +4,6 @@ import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.util.FocusHandler;
 import io.wispforest.owo.ui.util.ScissorStack;
 import io.wispforest.owo.util.Observable;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -210,7 +209,7 @@ public abstract class BaseParentComponent extends BaseComponent implements Paren
         }
 
         return ParentComponent.super.onMouseDown(mouseX, mouseY, button)
-                || super.onMouseDown(mouseX, mouseY, button);
+            || super.onMouseDown(mouseX, mouseY, button);
     }
 
     @Override
@@ -245,7 +244,7 @@ public abstract class BaseParentComponent extends BaseComponent implements Paren
         if (keyCode == GLFW.GLFW_KEY_TAB) {
             this.focusHandler.cycle((modifiers & GLFW.GLFW_MOD_SHIFT) == 0);
         } else if ((keyCode == GLFW.GLFW_KEY_RIGHT || keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_DOWN || keyCode == GLFW.GLFW_KEY_UP)
-                && (modifiers & GLFW.GLFW_MOD_ALT) != 0) {
+            && (modifiers & GLFW.GLFW_MOD_ALT) != 0) {
             this.focusHandler.moveFocus(keyCode);
         } else if (this.focusHandler.focused() != null) {
             return this.focusHandler.focused().onKeyPress(keyCode, scanCode, modifiers);
@@ -313,19 +312,19 @@ public abstract class BaseParentComponent extends BaseComponent implements Paren
         switch (positioning.type) {
             case LAYOUT -> layoutFunc.accept(child);
             case ABSOLUTE -> child.mount(
-                    this,
-                    this.x + positioning.x + componentMargins.left() + padding.left(),
-                    this.y + positioning.y + componentMargins.top() + padding.top()
+                this,
+                this.x + positioning.x + componentMargins.left() + padding.left(),
+                this.y + positioning.y + componentMargins.top() + padding.top()
             );
             case RELATIVE -> child.mount(
-                    this,
-                    this.x + padding.left() + componentMargins.left() + Math.round((positioning.x / 100f) * (this.width() - child.fullSize().width() - padding.horizontal())),
-                    this.y + padding.top() + componentMargins.top() + Math.round((positioning.y / 100f) * (this.height() - child.fullSize().height() - padding.vertical()))
+                this,
+                this.x + padding.left() + componentMargins.left() + Math.round((positioning.x / 100f) * (this.width() - child.fullSize().width() - padding.horizontal())),
+                this.y + padding.top() + componentMargins.top() + Math.round((positioning.y / 100f) * (this.height() - child.fullSize().height() - padding.vertical()))
             );
             case ACROSS -> child.mount(
-                    this,
-                    this.x + padding.left() + componentMargins.left() + Math.round((positioning.x / 100f) * (this.width() - padding.horizontal())),
-                    this.y + padding.top() + componentMargins.top() + Math.round((positioning.y / 100f) * (this.height() - padding.vertical()))
+                this,
+                this.x + padding.left() + componentMargins.left() + Math.round((positioning.x / 100f) * (this.width() - padding.horizontal())),
+                this.y + padding.top() + componentMargins.top() + Math.round((positioning.y / 100f) * (this.height() - padding.vertical()))
             );
         }
     }
@@ -340,7 +339,7 @@ public abstract class BaseParentComponent extends BaseComponent implements Paren
     protected void drawChildren(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta, List<? extends Component> children) {
         if (!this.allowOverflow) {
             var padding = this.padding.get();
-            ScissorStack.push(this.x + padding.left(), this.y + padding.top(), this.width - padding.horizontal(), this.height - padding.vertical(), context.getMatrices());
+            ScissorStack.push(this.x + padding.left(), this.y + padding.top(), this.width - padding.horizontal(), this.height - padding.vertical(), context);
         }
 
         var focusHandler = this.focusHandler();
@@ -375,8 +374,8 @@ public abstract class BaseParentComponent extends BaseComponent implements Paren
         final var padding = this.padding.get();
 
         return Size.of(
-                MathHelper.lerp(this.horizontalSizing.get().contentFactor(), this.width - padding.horizontal(), thisSpace.width() - padding.horizontal()),
-                MathHelper.lerp(this.verticalSizing.get().contentFactor(), this.height - padding.vertical(), thisSpace.height() - padding.vertical())
+            MathHelper.lerp(this.horizontalSizing.get().contentFactor(), this.width - padding.horizontal(), thisSpace.width() - padding.horizontal()),
+            MathHelper.lerp(this.verticalSizing.get().contentFactor(), this.height - padding.vertical(), thisSpace.height() - padding.vertical())
         );
     }
 

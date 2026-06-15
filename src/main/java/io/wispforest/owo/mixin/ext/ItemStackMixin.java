@@ -16,44 +16,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
-    @Shadow @Final ComponentMapImpl components;
+    @Shadow @Final
+    ComponentMapImpl components;
 
-    @Unique private DerivedComponentMap owo$derivedMap;
+    @Unique private DerivedComponentMap derivedMap;
 
-    @Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;ILnet/minecraft/component/ComponentMapImpl;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;postProcessComponents(Lnet/minecraft/item/ItemStack;)V"))
+    @Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;ILnet/minecraft/component/ComponentMapImpl;)V", at = @At("TAIL"))
     private void injectDerivedComponentMap(ItemConvertible item, int count, ComponentMapImpl components, CallbackInfo ci) {
         var base = ((ComponentMapImplAccessor)(Object) this.components).owo$getBaseComponents();
 
         if (base instanceof DerivedComponentMap derived) {
-            owo$derivedMap = derived;
+            derivedMap = derived;
         } else {
-            owo$derivedMap = new DerivedComponentMap(base);
-            ((ComponentMapImplAccessor)(Object) this.components).owo$setBaseComponents(owo$derivedMap);
+            derivedMap = new DerivedComponentMap(base);
+            ((ComponentMapImplAccessor)(Object) this.components).owo$setBaseComponents(derivedMap);
         }
     }
 
-    // TODO: for some reason mixin doesn't like it if I put all the injects in one method.
-    @Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;ILnet/minecraft/component/ComponentMapImpl;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;postProcessComponents(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
-    private void deriveComponents1(ItemConvertible item, int count, ComponentMapImpl components, CallbackInfo ci) {
-        if (owo$derivedMap == null) return;
-        owo$derivedMap.derive((ItemStack)(Object) this);
-    }
-
-    @Inject(method = "applyChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;postProcessComponents(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+    @Inject(method = "applyChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/component/ComponentMapImpl;applyChanges(Lnet/minecraft/component/ComponentChanges;)V", shift = At.Shift.AFTER))
     private void deriveComponents2(ComponentChanges changes, CallbackInfo ci) {
-        if (owo$derivedMap == null) return;
-        owo$derivedMap.derive((ItemStack)(Object) this);
+        if (derivedMap == null) return;
+        derivedMap.derive((ItemStack)(Object) this);
     }
 
-    @Inject(method = "applyUnvalidatedChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;postProcessComponents(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+    @Inject(method = "applyUnvalidatedChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/component/ComponentMapImpl;applyChanges(Lnet/minecraft/component/ComponentChanges;)V", shift = At.Shift.AFTER))
     private void deriveComponents3(ComponentChanges changes, CallbackInfo ci) {
-        if (owo$derivedMap == null) return;
-        owo$derivedMap.derive((ItemStack)(Object) this);
+        if (derivedMap == null) return;
+        derivedMap.derive((ItemStack)(Object) this);
     }
 
-    @Inject(method = "applyComponentsFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;postProcessComponents(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+    @Inject(method = "applyComponentsFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/component/ComponentMapImpl;setAll(Lnet/minecraft/component/ComponentMap;)V", shift = At.Shift.AFTER))
     private void deriveComponents4(ComponentMap components, CallbackInfo ci) {
-        if (owo$derivedMap == null) return;
-        owo$derivedMap.derive((ItemStack)(Object) this);
+        if (derivedMap == null) return;
+        derivedMap.derive((ItemStack)(Object) this);
     }
 }

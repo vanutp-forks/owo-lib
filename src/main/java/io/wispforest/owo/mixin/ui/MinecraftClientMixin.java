@@ -49,6 +49,11 @@ public class MinecraftClientMixin {
         ClientRenderCallback.AFTER.invoker().onRender((MinecraftClient) (Object) this);
     }
 
+    @Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;renderTime:J"))
+    private void beforeSwap(boolean tick, CallbackInfo ci) {
+        ClientRenderCallback.BEFORE_SWAP.invoker().onRender((MinecraftClient) (Object) this);
+    }
+
     @Inject(method = "setScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;removed()V"))
     private void captureSetScreen(Screen screen, CallbackInfo ci) {
         if (screen != null && this.currentScreen instanceof DisposableScreen disposable) {
@@ -64,9 +69,9 @@ public class MinecraftClientMixin {
                 } catch (Throwable error) {
                     var report = new CrashReport("Failed to dispose screen", error);
                     report.addElement("Screen being disposed: ")
-                            .add("Screen class", disposable.getClass())
-                            .add("Screen being closed", this.currentScreen)
-                            .add("Total screens to dispose", this.screensToDispose.size());
+                        .add("Screen class", disposable.getClass())
+                        .add("Screen being closed", this.currentScreen)
+                        .add("Total screens to dispose", this.screensToDispose.size());
 
                     throw new CrashException(report);
                 }
