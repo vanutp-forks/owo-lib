@@ -20,7 +20,7 @@ public class MouseMixin {
 
     @Shadow private int activeButton;
 
-    @Inject(method = "method_55795", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "lambda$handleAccumulatedMovement$11", at = @At("HEAD"), cancellable = true)
     private void captureScreenMouseDrag(Screen screen, double mouseX, double mouseY, double deltaX, double deltaY, CallbackInfo ci) {
         boolean handled = false;
         for (var instance : Layers.getInstances(screen)) {
@@ -34,18 +34,18 @@ public class MouseMixin {
     @Unique
     private static final ThreadLocal<Integer> MODS = new ThreadLocal<>();
 
-    @Inject(method = "onMouseButton", at = @At("HEAD"))
+    @Inject(method = "onPress", at = @At("HEAD"))
     private void captureMods(long window, int button, int action, int mods, CallbackInfo ci) {
         MODS.set(mods);
     }
 
-    @WrapOperation(method = "method_1611", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"))
+    @WrapOperation(method = "lambda$onPress$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;mouseClicked(DDI)Z"))
     private static boolean passModifiersToBraid$mouseClicked(Screen screen, double mouseX, double mouseY, int button, Operation<Boolean> original) {
         if (screen instanceof BraidScreen braidScreen) return braidScreen.mouseClicked(mouseX, mouseY, button, MODS.get());
         return original.call(screen, mouseX, mouseY, button);
     }
 
-    @WrapOperation(method = "method_1605", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"))
+    @WrapOperation(method = "lambda$onPress$1", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;mouseReleased(DDI)Z"))
     private static boolean passModifiersToBraid$mouseReleased(Screen screen, double mouseX, double mouseY, int button, Operation<Boolean> original) {
         if (screen instanceof BraidScreen braidScreen) return braidScreen.mouseReleased(mouseX, mouseY, button, MODS.get());
         return original.call(screen, mouseX, mouseY, button);

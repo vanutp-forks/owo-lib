@@ -19,9 +19,9 @@ public class ToastManagerMixin {
 
     @Shadow
     @Final
-    private List<ToastManager.Entry<?>> visibleEntries;
+    private List<ToastManager.Entry<?>> visible;
 
-    @Inject(method = "method_45074", at = @At(value = "INVOKE", target = "Ljava/util/BitSet;clear(II)V"))
+    @Inject(method = "lambda$render$0", at = @At(value = "INVOKE", target = "Ljava/util/BitSet;clear(II)V"))
     private void disposeBraidToasts(int i, DrawContext drawContext, ToastManager.Entry visibleEntry, CallbackInfoReturnable<Boolean> cir) {
         if (visibleEntry.getInstance() instanceof BraidToast toast) {
             toast.dispose();
@@ -30,7 +30,7 @@ public class ToastManagerMixin {
 
     @Inject(method = "clear", at = @At("HEAD"))
     private void disposeBraidToastsEpisode2(CallbackInfo ci) {
-        for (var entry : this.visibleEntries) {
+        for (var entry : this.visible) {
             if (entry.getInstance() instanceof BraidToast toast) {
                 toast.dispose();
             }
