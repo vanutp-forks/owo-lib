@@ -34,7 +34,7 @@ public class LanguageMixin {
     @Unique private static final String NESTED_LANG_ENABLER = "nested_lang";
 
     @WrapOperation(
-        method = "load(Ljava/io/InputStream;Ljava/util/function/BiConsumer;)V",
+        method = "loadFromJson",
         at = @At(value = "INVOKE", target = "Lcom/google/gson/JsonObject;entrySet()Ljava/util/Set;")
     )
     private static Set<Map.Entry<String, JsonElement>> deNestNestedKeys(
@@ -64,7 +64,7 @@ public class LanguageMixin {
     @Unique private static final String SKIP_NEXT = "skipNextKey";
 
     @WrapOperation(
-        method = "load(Ljava/io/InputStream;Ljava/util/function/BiConsumer;)V", at = @At(
+        method = "loadFromJson", at = @At(
         value = "INVOKE",
         target = "Lnet/minecraft/util/JsonHelper;asString(Lcom/google/gson/JsonElement;Ljava/lang/String;)Ljava/lang/String;"
     )
@@ -110,7 +110,7 @@ public class LanguageMixin {
     }
 
     @WrapWithCondition(
-        method = "load(Ljava/io/InputStream;Ljava/util/function/BiConsumer;)V",
+        method = "loadFromJson",
         at = @At(value = "INVOKE", target = "Ljava/util/function/BiConsumer;accept(Ljava/lang/Object;Ljava/lang/Object;)V"))
     private static boolean doSkip(
         BiConsumer<Object, Object> biConsumer,
